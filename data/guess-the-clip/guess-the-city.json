@@ -1,0 +1,29 @@
+{
+  "template": "guess-the-clip",
+  "title": "Guess the City!",
+  "subtitle": "Watch the footage and guess!",
+  "icon": "🏙️",
+  "itemLabel": "CITY",
+  "promptText": "Which city is this?",
+  "watchText": "🌍  Watch closely...",
+  "clipDuration": 10,
+  "thinkTime": 8,
+  "accentColor": "#38bdf8",
+  "questions": [
+    {
+      "options": ["Mumbai", "Delhi", "Bangalore", "Kolkata"],
+      "correctIndex": 0,
+      "clipLabel": "Hint: City of Dreams"
+    },
+    {
+      "options": ["Paris", "London", "Rome", "Barcelona"],
+      "correctIndex": 2,
+      "clipLabel": "Hint: Ancient empire"
+    },
+    {
+      "options": ["Tokyo", "Seoul", "Shanghai", "Bangkok"],
+      "correctIndex": 0,
+      "clipLabel": "Hint: Land of the Rising Sun"
+    }
+  ]
+}

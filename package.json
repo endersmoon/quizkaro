@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "render": "tsx src/render.ts",
+    "render": "tsx src/cli.ts",
+    "render:old": "tsx src/render.ts",
     "serve": "npx revideo serve --projectFile ./src/project.ts"
   },
   "dependencies": {

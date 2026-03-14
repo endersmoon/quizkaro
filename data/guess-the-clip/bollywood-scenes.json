@@ -1,0 +1,29 @@
+{
+  "template": "guess-the-clip",
+  "title": "Guess the Bollywood Scene!",
+  "subtitle": "15 seconds to watch, then guess!",
+  "icon": "🎬",
+  "itemLabel": "SCENE",
+  "promptText": "Which movie was this from?",
+  "watchText": "👀  Watch the clip...",
+  "clipDuration": 15,
+  "thinkTime": 10,
+  "accentColor": "#f43f5e",
+  "questions": [
+    {
+      "options": ["3 Idiots", "PK", "Munna Bhai M.B.B.S.", "Lage Raho Munna Bhai"],
+      "correctIndex": 0,
+      "clipLabel": "Hint: A college comedy"
+    },
+    {
+      "options": ["Sholay", "Deewar", "Don", "Agneepath"],
+      "correctIndex": 0,
+      "clipLabel": "Hint: Classic action"
+    },
+    {
+      "options": ["Dilwale Dulhania Le Jayenge", "Kuch Kuch Hota Hai", "Kabhi Khushi Kabhie Gham", "Kal Ho Naa Ho"],
+      "correctIndex": 0,
+      "clipLabel": "Hint: Iconic romance"
+    }
+  ]
+}

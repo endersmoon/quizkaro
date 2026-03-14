@@ -62,27 +62,17 @@ export default makeScene2D('mcq-quiz', function* (view) {
   );
 
   // ─── INTRO SCREEN ───
-  const introContainer = createRef<Layout>();
+  // Using absolute positioning to avoid layout flow issues with scale animations
   const introTitle = createRef<Txt>();
   const introAccent = createRef<Rect>();
-  const introLine1 = createRef<Rect>();
-  const introLine2 = createRef<Rect>();
+  const introLine = createRef<Rect>();
 
   yield view.add(
-    <Layout ref={introContainer} direction="column" alignItems="center" gap={40}>
-      <Rect
-        ref={introLine1}
-        width={0}
-        height={4}
-        radius={2}
-        fill={accentColor}
-        shadowColor={accentColor}
-        shadowBlur={20}
-      />
+    <>
       <Txt
         ref={introTitle}
         text={title}
-        fontSize={72}
+        fontSize={80}
         fontWeight={900}
         fontFamily="'Arial Black', 'Arial', sans-serif"
         fill={C.white}
@@ -93,59 +83,62 @@ export default makeScene2D('mcq-quiz', function* (view) {
         textWrap
         width={900}
         textAlign="center"
-        lineHeight={90}
+        lineHeight={100}
+        y={-80}
+      />
+      <Rect
+        ref={introLine}
+        width={0}
+        height={5}
+        radius={3}
+        fill={accentColor}
+        shadowColor={accentColor}
+        shadowBlur={25}
+        y={40}
       />
       <Rect
         ref={introAccent}
-        height={56}
-        paddingLeft={36}
-        paddingRight={36}
-        radius={28}
+        height={60}
+        paddingLeft={40}
+        paddingRight={40}
+        radius={30}
         fill={accentColor}
         opacity={0}
-        scale={0.5}
+        scale={0}
         shadowColor={accentColor}
         shadowBlur={20}
+        y={120}
       >
         <Txt
           text={`${questions.length} QUESTIONS`}
-          fontSize={24}
+          fontSize={26}
           fontWeight={800}
           fontFamily="'Arial', sans-serif"
           fill={C.white}
-          letterSpacing={5}
+          letterSpacing={6}
         />
       </Rect>
-      <Rect
-        ref={introLine2}
-        width={0}
-        height={4}
-        radius={2}
-        fill={accentColor}
-        shadowColor={accentColor}
-        shadowBlur={20}
-      />
-    </Layout>,
+    </>,
   );
 
-  yield* all(
-    introLine1().width(300, 0.6, easeOutCubic),
-    introLine2().width(300, 0.6, easeOutCubic),
-  );
   yield* all(
     introTitle().opacity(1, 0.5),
     introTitle().scale([0.9, 0.9], 0).to([1, 1], 0.6, easeOutBack),
   );
+  yield* introLine().width(400, 0.5, easeOutCubic);
   yield* all(
     introAccent().opacity(1, 0.4),
     introAccent().scale(1, 0.5, easeOutBack),
   );
   yield* waitFor(2.5);
   yield* all(
-    introContainer().opacity(0, 0.5),
-    introContainer().scale(0.95, 0.5),
+    introTitle().opacity(0, 0.5),
+    introLine().opacity(0, 0.5),
+    introAccent().opacity(0, 0.5),
   );
-  introContainer().remove();
+  introTitle().remove();
+  introLine().remove();
+  introAccent().remove();
 
   // ─── QUESTIONS ───
   // Positions for 1080x1920 portrait canvas
@@ -380,13 +373,12 @@ export default makeScene2D('mcq-quiz', function* (view) {
   }
 
   // ─── OUTRO ───
-  const outroContainer = createRef<Layout>();
   const outroTitle = createRef<Txt>();
   const outroSub = createRef<Txt>();
   const outroLine = createRef<Rect>();
 
   yield view.add(
-    <Layout ref={outroContainer} direction="column" alignItems="center" gap={24}>
+    <>
       <Txt
         ref={outroTitle}
         text="Thanks for Playing!"
@@ -397,6 +389,7 @@ export default makeScene2D('mcq-quiz', function* (view) {
         opacity={0}
         shadowColor={accentColor}
         shadowBlur={30}
+        y={-60}
       />
       <Rect
         ref={outroLine}
@@ -406,6 +399,7 @@ export default makeScene2D('mcq-quiz', function* (view) {
         fill={accentColor}
         shadowColor={accentColor}
         shadowBlur={20}
+        y={10}
       />
       <Txt
         ref={outroSub}
@@ -416,8 +410,9 @@ export default makeScene2D('mcq-quiz', function* (view) {
         fill={accentColor}
         opacity={0}
         letterSpacing={2}
+        y={60}
       />
-    </Layout>,
+    </>,
   );
 
   yield* all(

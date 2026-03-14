@@ -1,0 +1,35 @@
+{
+  "template": "guess-song",
+  "title": "Guess the Song!",
+  "theme": "neon-pink",
+  "thinkTime": 10,
+  "questions": [
+    {
+      "options": [
+        "Adele - Rolling in the Deep",
+        "Beyoncé - Halo",
+        "Ed Sheeran - Shape of You",
+        "Taylor Swift - Shake It Off"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "options": [
+        "Queen - Bohemian Rhapsody",
+        "The Beatles - Hey Jude",
+        "Led Zeppelin - Stairway to Heaven",
+        "Pink Floyd - Comfortably Numb"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "options": [
+        "Dua Lipa - Levitating",
+        "The Weeknd - Blinding Lights",
+        "Harry Styles - Watermelon Sugar",
+        "Olivia Rodrigo - drivers license"
+      ],
+      "correctIndex": 1
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "quizkaro",
+  "version": "1.0.0",
+  "description": "Template-based quiz video generator powered by Revideo",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "render": "tsx src/render.ts",
+    "serve": "npx revideo serve --projectFile ./src/project.ts"
+  },
+  "dependencies": {
+    "@revideo/2d": "^0.10.4",
+    "@revideo/core": "^0.10.4",
+    "@revideo/ffmpeg": "^0.10.4",
+    "@revideo/renderer": "^0.10.4",
+    "@revideo/ui": "^0.10.4",
+    "@revideo/vite-plugin": "^0.10.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "template": "mcq",
+  "title": "Math Challenged",
+  "theme": "dark-purple",
+  "thinkTime": 20,
+  "questions": [
+    {
+      "text": "If a dozen Alphonso mangoes cost ₹1,200, what is the cost of 3 mangoes?",
+      "options": ["₹400", "₹300", "₹250", "₹100"],
+      "correctIndex": 1
+    },
+    {
+      "text": "In Cricket, if a batsman scores a century, how many runs has he scored?",
+      "options": ["50", "100", "150", "200"],
+      "correctIndex": 1
+    },
+    {
+      "text": "Which Indian mathematician is famous for discovering 'Zero'?",
+      "options": ["Ramanujan", "Aryabhata", "Bhaskara", "Shakuntala Devi"],
+      "correctIndex": 1
+    },
+    {
+      "text": "How many centimeters are there in 5 meters?",
+      "options": ["50 cm", "500 cm", "5,000 cm", "5.5 cm"],
+      "correctIndex": 1
+    },
+    {
+      "text": "If the time is 15:30 in 24-hour format, what is it in 12-hour format?",
+      "options": ["5:30 PM", "3:30 AM", "3:30 PM", "4:30 PM"],
+      "correctIndex": 2
+    },
+    {
+      "text": "What is the smallest 3-digit number?",
+      "options": ["111", "999", "101", "100"],
+      "correctIndex": 3
+    },
+    {
+      "text": "A 'Lakh' consists of how many zeros?",
+      "options": ["4", "5", "6", "7"],
+      "correctIndex": 1
+    },
+    {
+      "text": "Calculate the area of a square if one side is 12 cm.",
+      "options": ["24 cm²", "48 cm²", "144 cm²", "120 cm²"],
+      "correctIndex": 2
+    },
+    {
+      "text": "In a class of 40 students, 60% are girls. How many boys are there?",
+      "options": ["24", "16", "20", "18"],
+      "correctIndex": 1
+    },
+    {
+      "text": "What is the value of 'x' in the linear equation: 3x - 5 = 10?",
+      "options": ["5", "3", "15", "10"],
+      "correctIndex": 0
+    }
+  ]
+}

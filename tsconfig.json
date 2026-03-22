@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "jsxImportSource": "@revideo/2d/lib",
+    "jsxImportSource": "@reelgen/2d/lib",
     "esModuleInterop": true,
     "strict": true,
     "outDir": "./dist",

@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "output", "-l", "3456"],
       "port": 3456
+    },
+    {
+      "name": "quizkaro-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "web"],
+      "port": 3000
     }
   ]
 }

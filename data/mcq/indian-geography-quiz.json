@@ -1,0 +1,58 @@
+{
+  "template": "mcq",
+  "title": "Indian Geography Quiz",
+  "theme": "ocean-blue",
+  "thinkTime": 10,
+  "questions": [
+    {
+      "text": "Which mountain range is located in the northern part of India and contains the highest peaks in the world?",
+      "options": [
+        "Vindhyas",
+        "Himalayas",
+        "Aravallis",
+        "Western Ghats"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "text": "Which of these is the longest river in India, often considered sacred?",
+      "options": [
+        "Yamuna",
+        "Godavari",
+        "Ganga",
+        "Narmada"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "text": "Which Indian state is famous for its backwaters and is often called 'God's Own Country'?",
+      "options": [
+        "Kerala",
+        "Goa",
+        "Tamil Nadu",
+        "Karnataka"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "text": "The Thar Desert, also known as the Great Indian Desert, is primarily located in which state?",
+      "options": [
+        "Gujarat",
+        "Punjab",
+        "Rajasthan",
+        "Haryana"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "text": "Which water body lies to the east of the Indian peninsula?",
+      "options": [
+        "Arabian Sea",
+        "Indian Ocean",
+        "Caspian Sea",
+        "Bay of Bengal"
+      ],
+      "correctIndex": 3
+    }
+  ]
+}

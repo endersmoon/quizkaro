@@ -1,0 +1,49 @@
+{
+  "template": "mcq",
+  "title": "Math Challenge",
+  "theme": "dark-purple",
+  "thinkTime": 10,
+  "questions": [
+    {
+      "text": "If a dozen Alphonso mangoes cost ₹1,200, what is the cost of 3 mangoes?",
+      "options": [
+        "₹400",
+        "₹300",
+        "₹250",
+        "₹100"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "text": "In Cricket, if a batsman scores a century, how many runs has he scored?",
+      "options": [
+        "50",
+        "100",
+        "150",
+        "200"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "text": "Which Indian mathematician is famous for discovering 'Zero'?",
+      "options": [
+        "Ramanujan",
+        "Aryabhata",
+        "Bhaskara",
+        "Shakuntala Devi"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "text": "How many centimeters are there in 5 meters?",
+      "options": [
+        "50 cm",
+        "500 cm",
+        "5,000 cm",
+        "5.5 cm"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "accentColor": "#1bf8c1"
+}

@@ -1,4 +1,4 @@
-import {Rect, Txt, makeScene2D} from '@revideo/2d';
+import {Rect, Txt, makeScene2D} from '@reelgen/2d';
 import {
   all,
   createRef,
@@ -6,7 +6,7 @@ import {
   useScene,
   easeOutBack,
   easeOutCubic,
-} from '@revideo/core';
+} from '@reelgen/core';
 import {
   renderIntro,
   renderOutro,
@@ -54,9 +54,10 @@ export default makeScene2D('mcq-quiz-v2', function* (view) {
   const Y_HEADER = -750;
   const Y_DOTS = -700;
   const Y_QUESTION = -500;
-  const Y_FIRST_OPTION = -180;
+  const Y_FIRST_OPTION_DEFAULT = -180;
   const OPTION_GAP = 150;
-  const Y_TIMER = 520;
+  const Y_TIMER_DEFAULT = 520;
+  const OPTION_TOP_MARGIN = 40; // gap between question card bottom and first option
 
   for (let qi = 0; qi < questions.length; qi++) {
     const q = questions[qi];
@@ -75,14 +76,14 @@ export default makeScene2D('mcq-quiz-v2', function* (view) {
 
     const options = createOptionCards({
       options: q.options,
-      yStart: Y_FIRST_OPTION,
+      yStart: Y_FIRST_OPTION_DEFAULT,
       gap: OPTION_GAP,
       theme,
     });
 
     const timer = createTimer({
       thinkTime,
-      y: Y_TIMER,
+      y: Y_TIMER_DEFAULT,
       accentColor,
       theme,
     });
@@ -134,6 +135,18 @@ export default makeScene2D('mcq-quiz-v2', function* (view) {
         {timer.jsx}
       </>,
     );
+
+    // Dynamically position options based on question card height
+    const cardBottom = Y_QUESTION + questionCard().height() / 2;
+    const actualYStart = cardBottom + OPTION_TOP_MARGIN;
+    for (let i = 0; i < q.options.length; i++) {
+      options.refs.optionRects[i].y(actualYStart + i * OPTION_GAP);
+    }
+    // Position timer below options
+    const timerY = actualYStart + q.options.length * OPTION_GAP + 40;
+    timer.refs.timerBgCircle().y(timerY);
+    timer.refs.timerFillCircle().y(timerY);
+    timer.refs.timerTxt().y(timerY);
 
     // Animate in
     yield* all(headerTxt().opacity(1, 0.3));

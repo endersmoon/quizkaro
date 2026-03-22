@@ -1,5 +1,5 @@
 import {defineConfig} from 'vite';
-import motionCanvas from '@revideo/vite-plugin';
+import motionCanvas from '@reelgen/vite-plugin';
 
 export default defineConfig({
   plugins: [

@@ -1,33 +1,10 @@
-import {renderVideo} from '@revideo/renderer';
 import * as fs from 'fs';
 import * as path from 'path';
-
-// ─── Types ───
-
-interface BaseQuizData {
-  template: 'mcq' | 'guess-song' | 'guess-movie-emoji' | 'guess-the-clip';
-  title: string;
-  subtitle?: string;
-  theme?: string;
-  thinkTime?: number;
-  accentColor?: string;
-  questions: any[];
-  // guess-the-clip specific
-  icon?: string;
-  itemLabel?: string;
-  promptText?: string;
-  watchText?: string;
-  clipDuration?: number;
-}
-
-// ─── Template → Project file mapping ───
-
-const TEMPLATE_PROJECTS: Record<string, string> = {
-  mcq: './src/project-templates/mcq.ts',
-  'guess-song': './src/project-templates/guess-song.ts',
-  'guess-movie-emoji': './src/project-templates/guess-movie-emoji.ts',
-  'guess-the-clip': './src/project-templates/guess-the-clip.ts',
-};
+import {
+  renderQuiz,
+  TEMPLATE_PROJECTS,
+  type BaseQuizData,
+} from './core/render.js';
 
 // ─── CLI ───
 
@@ -108,23 +85,21 @@ async function main() {
   const data: BaseQuizData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
   // Validate template
-  const template = data.template;
-  if (!TEMPLATE_PROJECTS[template]) {
+  if (!TEMPLATE_PROJECTS[data.template]) {
     console.error(
-      `Error: Unknown template "${template}". Available: ${Object.keys(TEMPLATE_PROJECTS).join(', ')}`,
+      `Error: Unknown template "${data.template}". Available: ${Object.keys(TEMPLATE_PROJECTS).join(', ')}`,
     );
     process.exit(1);
   }
 
-  // Determine output filename
   const inputName = path.basename(args.dataFile, '.json');
-  const outFile = args.outFile || `${template}-${inputName}.mp4`;
+  const outFile = args.outFile || `${data.template}-${inputName}.mp4`;
   const themeName = args.theme || data.theme || 'dark-purple';
 
   console.log(`╔══════════════════════════════════════════╗`);
   console.log(`║         QuizKaro Video Renderer          ║`);
   console.log(`╚══════════════════════════════════════════╝`);
-  console.log(`  Template:  ${template}`);
+  console.log(`  Template:  ${data.template}`);
   console.log(`  Title:     ${data.title}`);
   console.log(`  Questions: ${data.questions.length}`);
   console.log(`  Theme:     ${themeName}`);
@@ -134,39 +109,18 @@ async function main() {
 
   const startTime = Date.now();
 
-  // Build variables from data
-  const variables: Record<string, string> = {
-    title: data.title,
-    questions: JSON.stringify(data.questions),
-    thinkTime: String(data.thinkTime ?? 10),
-    theme: themeName,
-  };
-  if (data.subtitle) variables.subtitle = data.subtitle;
-  if (data.accentColor) variables.accentColor = data.accentColor;
-  // guess-the-clip specific variables
-  if (data.icon) variables.icon = data.icon;
-  if (data.itemLabel) variables.itemLabel = data.itemLabel;
-  if (data.promptText) variables.promptText = data.promptText;
-  if (data.watchText) variables.watchText = data.watchText;
-  if (data.clipDuration) variables.clipDuration = String(data.clipDuration);
-
-  const projectFile = TEMPLATE_PROJECTS[template];
-
-  const outputPath = await renderVideo({
-    projectFile,
-    variables,
-    settings: {
-      outFile,
-      outDir: args.outDir,
-      workers: args.workers,
-      logProgress: true,
-    },
+  const outputPath = await renderQuiz(data, {
+    outFile,
+    outDir: args.outDir,
+    theme: args.theme,
+    workers: args.workers,
+    logProgress: true,
   });
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log('');
-  console.log(`✅ Render complete in ${elapsed}s`);
-  console.log(`📁 Output: ${outputPath}`);
+  console.log(`\u2705 Render complete in ${elapsed}s`);
+  console.log(`\ud83d\udcc1 Output: ${outputPath}`);
 }
 
 main().catch(err => {

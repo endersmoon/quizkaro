@@ -1,4 +1,4 @@
-import {Gradient} from '@revideo/2d';
+import {Gradient} from '@reelgen/2d';
 
 /**
  * Theme definition for quiz videos.

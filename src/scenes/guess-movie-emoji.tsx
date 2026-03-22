@@ -1,5 +1,5 @@
-import {Rect, Txt, Circle, Layout, makeScene2D} from '@revideo/2d';
-import {Gradient} from '@revideo/2d';
+import {Rect, Txt, Circle, Layout, makeScene2D} from '@reelgen/2d';
+import {Gradient} from '@reelgen/2d';
 import {
   all,
   chain,
@@ -13,7 +13,7 @@ import {
   easeInCubic,
   easeInOutSine,
   linear,
-} from '@revideo/core';
+} from '@reelgen/core';
 
 interface MovieQuestion {
   emojis: string; // emoji clue string e.g. "🦁👑"
@@ -180,9 +180,10 @@ export default makeScene2D('guess-movie-emoji', function* (view) {
   const Y_PROMPT = -620;
   const Y_EMOJI_BOX = -350;
   const Y_QUESTION_MARK = -80;
-  const Y_FIRST_OPTION = 80;
+  const Y_FIRST_OPTION_DEFAULT = 80;
   const OPTION_GAP = 140;
-  const Y_TIMER = 660;
+  const Y_TIMER_DEFAULT = 660;
+  const OPTION_TOP_MARGIN = 40;
 
   for (let qi = 0; qi < questions.length; qi++) {
     const q = questions[qi];
@@ -303,7 +304,7 @@ export default makeScene2D('guess-movie-emoji', function* (view) {
             fill={C.optionBg}
             stroke={C.optionBorder}
             lineWidth={2}
-            y={Y_FIRST_OPTION + i * OPTION_GAP}
+            y={Y_FIRST_OPTION_DEFAULT + i * OPTION_GAP}
             opacity={0}
             x={i % 2 === 0 ? -500 : 500}
             shadowColor={'rgba(0,0,0,0.3)'}
@@ -346,7 +347,7 @@ export default makeScene2D('guess-movie-emoji', function* (view) {
           size={100}
           stroke={C.timerBg}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
         <Circle
@@ -354,7 +355,7 @@ export default makeScene2D('guess-movie-emoji', function* (view) {
           size={100}
           stroke={accentColor}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           startAngle={-90}
           endAngle={270}
           shadowColor={accentColor}
@@ -368,11 +369,22 @@ export default makeScene2D('guess-movie-emoji', function* (view) {
           fontWeight={800}
           fontFamily="'Arial', sans-serif"
           fill={C.white}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
       </>,
     );
+
+    // Dynamically position options based on question mark text height
+    const qmBottom = Y_QUESTION_MARK + questionMark().height() / 2;
+    const actualYStart = qmBottom + OPTION_TOP_MARGIN;
+    for (let i = 0; i < q.options.length; i++) {
+      optionRects[i].y(actualYStart + i * OPTION_GAP);
+    }
+    const timerY = actualYStart + q.options.length * OPTION_GAP + 40;
+    timerBgCircle().y(timerY);
+    timerFillCircle().y(timerY);
+    timerTxt().y(timerY);
 
     // ─── Animate in ───
     yield* all(

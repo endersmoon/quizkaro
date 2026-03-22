@@ -1,21 +1,21 @@
 {
   "template": "mcq",
-  "title": "General Knowledge Quiz",
+  "title": "gadbad quiz",
   "theme": "dark-purple",
   "thinkTime": 10,
   "questions": [
     {
-      "text": "What is the capital of France?",
+      "text": "What is the capital b hb hb of France?",
       "options": ["London", "Berlin", "Paris", "Madrid"],
       "correctIndex": 2
     },
     {
-      "text": "Which planet is known as the Red Planet?",
+      "text": "Which planet is known asn n n the Red Planet?",
       "options": ["Venus", "Mars", "Jupiter", "Saturn"],
       "correctIndex": 1
     },
     {
-      "text": "What is the largest ocean on Earth?",
+      "text": "What is the largest n nocean on Earth?",
       "options": ["Atlantic", "Indian", "Arctic", "Pacific"],
       "correctIndex": 3
     }

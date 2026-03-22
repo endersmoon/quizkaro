@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizKaro — Video Quiz Generator</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🎬</span>
+        <span class="logo-text">QuizKaro</span>
+      </div>
+      <div class="nav-items">
+        <button class="nav-btn active" data-tab="create">
+          <span class="nav-icon">✏️</span> Create Quiz
+        </button>
+        <button class="nav-btn" data-tab="videos">
+          <span class="nav-icon">🎥</span> My Videos
+        </button>
+        <button class="nav-btn" data-tab="saved">
+          <span class="nav-icon">💾</span> Saved Quizzes
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+
+      <!-- TAB: Create Quiz -->
+      <div class="tab-panel active" id="tab-create">
+
+        <!-- Step 1: Template -->
+        <section class="step" id="step-template">
+          <h2 class="step-title">1. Choose Template</h2>
+          <div class="template-grid" id="template-grid"></div>
+        </section>
+
+        <!-- Step 2: Questions -->
+        <section class="step" id="step-questions" style="display:none">
+          <div class="step-header">
+            <h2 class="step-title">2. Add Questions</h2>
+            <div class="step-actions">
+              <button class="btn btn-sm btn-outline" id="btn-load-json">📁 Load JSON</button>
+              <button class="btn btn-sm btn-outline" id="btn-paste-json">📋 Paste JSON</button>
+              <button class="btn btn-sm btn-primary" id="btn-add-question">+ Add Question</button>
+            </div>
+          </div>
+
+          <!-- Quiz Title -->
+          <div class="form-group">
+            <label>Quiz Title</label>
+            <input type="text" id="quiz-title" placeholder="e.g. General Knowledge Quiz" class="input">
+          </div>
+
+          <!-- Template-specific quiz fields -->
+          <div id="quiz-fields"></div>
+
+          <!-- Questions List -->
+          <div id="questions-list"></div>
+        </section>
+
+        <!-- Step 3: Settings -->
+        <section class="step" id="step-settings" style="display:none">
+          <h2 class="step-title">3. Theme & Settings</h2>
+
+          <div class="settings-grid">
+            <div class="setting-group">
+              <label>Theme</label>
+              <div class="theme-picker" id="theme-picker"></div>
+            </div>
+
+            <div class="setting-group">
+              <label>Think Time (seconds)</label>
+              <div class="range-group">
+                <input type="range" id="think-time" min="5" max="30" value="10" class="range">
+                <span class="range-value" id="think-time-value">10s</span>
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <label>Accent Color (optional override)</label>
+              <input type="color" id="accent-color" value="#e94560" class="color-input">
+              <label class="checkbox-label">
+                <input type="checkbox" id="use-accent"> Use custom accent
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Render Bar -->
+        <div class="render-bar" id="render-bar" style="display:none">
+          <div class="render-bar-left">
+            <span id="render-summary"></span>
+          </div>
+          <div class="render-bar-right">
+            <button class="btn btn-sm btn-outline" id="btn-save-quiz">💾 Save</button>
+            <button class="btn btn-primary btn-render" id="btn-render">🎬 Render Video</button>
+          </div>
+        </div>
+
+        <!-- Paste JSON Modal -->
+        <div class="modal-overlay" id="paste-modal" style="display:none">
+          <div class="modal" style="max-width:600px">
+            <h3>Paste Quiz JSON</h3>
+            <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">Paste your quiz JSON data below. It should include <code>template</code>, <code>title</code>, and <code>questions</code>.</p>
+            <textarea id="paste-json-input" class="input" rows="14" placeholder='{"template":"mcq","title":"My Quiz","questions":[...]}'
+              style="font-family:monospace;font-size:13px;resize:vertical;min-height:200px"></textarea>
+            <p id="paste-json-error" style="color:#ff5252;font-size:13px;margin-top:8px;display:none"></p>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+              <button class="btn btn-outline" id="btn-paste-cancel">Cancel</button>
+              <button class="btn btn-primary" id="btn-paste-load">Load Quiz</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Render Progress Modal -->
+        <div class="modal-overlay" id="render-modal" style="display:none">
+          <div class="modal">
+            <h3 id="modal-title">Rendering Video...</h3>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p class="progress-text" id="progress-text">Starting...</p>
+
+            <!-- Video Preview (shown on complete) -->
+            <div id="video-preview" style="display:none">
+              <div class="phone-frame">
+                <video id="preview-video" controls></video>
+              </div>
+              <div class="video-actions">
+                <a class="btn btn-primary" id="btn-download" download>⬇ Download</a>
+                <button class="btn btn-outline" id="btn-close-modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: My Videos -->
+      <div class="tab-panel" id="tab-videos">
+        <h2 class="step-title">My Videos</h2>
+        <div id="videos-grid" class="videos-grid"></div>
+      </div>
+
+      <!-- TAB: Saved Quizzes -->
+      <div class="tab-panel" id="tab-saved">
+        <h2 class="step-title">Saved Quizzes</h2>
+        <div id="saved-list" class="saved-list"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Hidden file input for JSON loading -->
+  <input type="file" id="json-file-input" accept=".json" style="display:none">
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

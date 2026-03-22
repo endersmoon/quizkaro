@@ -1,4 +1,4 @@
-import {makeProject} from '@revideo/core';
+import {makeProject} from '@reelgen/core';
 import mcqQuiz from './scenes/mcq-quiz';
 
 const sampleQuestions = JSON.stringify([

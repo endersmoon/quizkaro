@@ -1,5 +1,5 @@
-import {Rect, Txt, Circle, Layout, makeScene2D} from '@revideo/2d';
-import {Gradient} from '@revideo/2d';
+import {Audio, Rect, Txt, Circle, Layout, Video, makeScene2D} from '@reelgen/2d';
+import {Gradient} from '@reelgen/2d';
 import {
   all,
   chain,
@@ -12,12 +12,14 @@ import {
   easeInCubic,
   easeInOutSine,
   linear,
-} from '@revideo/core';
+} from '@reelgen/core';
 
 interface ClipQuestion {
   options: string[];
   correctIndex: number;
   clipLabel?: string; // optional label shown during clip e.g. "Hint: 90s classic"
+  clipSrc?: string; // optional path to a video file to play inside the clip box
+  audioSrc?: string; // optional path to an audio file to play during the clip
 }
 
 // Canvas: 1080 x 1920 (portrait). Origin at center.
@@ -185,9 +187,10 @@ export default makeScene2D('guess-the-clip', function* (view) {
   const Y_CLIP_BOX = -350;
   const Y_CLIP_PROGRESS = -130;
   const Y_PROMPT = -30;
-  const Y_FIRST_OPTION = 100;
+  const Y_FIRST_OPTION_DEFAULT = 100;
   const OPTION_GAP = 135;
-  const Y_TIMER = 660;
+  const Y_TIMER_DEFAULT = 660;
+  const OPTION_TOP_MARGIN = 40;
 
   // Clip box dimensions
   const CLIP_W = 900;
@@ -206,6 +209,10 @@ export default makeScene2D('guess-the-clip', function* (view) {
     const clipIconTxt = createRef<Txt>();
     const clipCountdownTxt = createRef<Txt>();
     const clipHintTxt = createRef<Txt>();
+    const clipVideo = createRef<Video>();
+    const clipAudio = createRef<Audio>();
+    const hasClip = !!q.clipSrc;
+    const hasAudio = !!q.audioSrc;
     const progressBarBg = createRef<Rect>();
     const progressBarFill = createRef<Rect>();
     const progressTimeTxt = createRef<Txt>();
@@ -275,7 +282,19 @@ export default makeScene2D('guess-the-clip', function* (view) {
           shadowColor={'rgba(0,0,0,0.5)'}
           shadowBlur={40}
           shadowOffset={[0, 8]}
+          clip
         >
+          {/* Actual video clip (if provided) */}
+          {hasClip && (
+            <Video
+              ref={clipVideo}
+              src={q.clipSrc!}
+              width={CLIP_W}
+              height={CLIP_H}
+              play={false}
+              opacity={0}
+            />
+          )}
           {/* Big play icon in center */}
           <Txt
             ref={clipIconTxt}
@@ -321,6 +340,15 @@ export default makeScene2D('guess-the-clip', function* (view) {
             ))}
           </Layout>
         </Rect>
+
+        {/* Audio clip (if provided) — invisible, just plays sound */}
+        {hasAudio && (
+          <Audio
+            ref={clipAudio}
+            src={q.audioSrc!}
+            play={false}
+          />
+        )}
 
         {/* Progress bar */}
         <Rect
@@ -390,7 +418,7 @@ export default makeScene2D('guess-the-clip', function* (view) {
             fill={C.optionBg}
             stroke={C.optionBorder}
             lineWidth={2}
-            y={Y_FIRST_OPTION + i * OPTION_GAP}
+            y={Y_FIRST_OPTION_DEFAULT + i * OPTION_GAP}
             opacity={0}
             x={i % 2 === 0 ? -500 : 500}
             shadowColor={'rgba(0,0,0,0.3)'}
@@ -433,7 +461,7 @@ export default makeScene2D('guess-the-clip', function* (view) {
           size={100}
           stroke={C.timerBg}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
         <Circle
@@ -441,7 +469,7 @@ export default makeScene2D('guess-the-clip', function* (view) {
           size={100}
           stroke={accentColor}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           startAngle={-90}
           endAngle={270}
           shadowColor={accentColor}
@@ -455,11 +483,22 @@ export default makeScene2D('guess-the-clip', function* (view) {
           fontWeight={800}
           fontFamily="'Arial', sans-serif"
           fill={C.white}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
       </>,
     );
+
+    // Dynamically position options based on prompt text height
+    const promptBottom = Y_PROMPT + promptTxt().height() / 2;
+    const actualYStart = promptBottom + OPTION_TOP_MARGIN;
+    for (let i = 0; i < q.options.length; i++) {
+      optionRects[i].y(actualYStart + i * OPTION_GAP);
+    }
+    const timerY = actualYStart + q.options.length * OPTION_GAP + 40;
+    timerBgCircle().y(timerY);
+    timerFillCircle().y(timerY);
+    timerTxt().y(timerY);
 
     // ─── Animate in ───
     yield* all(
@@ -479,11 +518,18 @@ export default makeScene2D('guess-the-clip', function* (view) {
     );
 
     // ─── Clip playback simulation ───
-    // Show countdown number and playing dots
+    // Show countdown number and playing dots; start video if available
+    if (hasClip) {
+      clipVideo().play();
+    }
+    if (hasAudio) {
+      clipAudio().play();
+    }
     yield* all(
       clipIconTxt().opacity(0, 0.3),
       clipCountdownTxt().opacity(1, 0.3),
       ...playDots.map(dot => dot.opacity(0.7, 0.3)),
+      ...(hasClip ? [clipVideo().opacity(1, 0.3)] : []),
     );
 
     // Animate the clip duration — progress bar fills + countdown decreases
@@ -539,7 +585,7 @@ export default makeScene2D('guess-the-clip', function* (view) {
       ),
     );
 
-    // Clip finished — flash the box
+    // Clip finished — flash the box, pause video
     yield* all(
       clipBox().stroke(accentColor, 0.3),
       clipBox().shadowColor(accentColor + '40', 0.3),
@@ -548,6 +594,12 @@ export default makeScene2D('guess-the-clip', function* (view) {
       clipCountdownTxt().fill(C.correct, 0.3),
       ...playDots.map(dot => dot.opacity(0, 0.2)),
     );
+    if (hasClip) {
+      clipVideo().pause();
+    }
+    if (hasAudio) {
+      clipAudio().pause();
+    }
 
     yield* waitFor(0.5);
 
@@ -565,7 +617,7 @@ export default makeScene2D('guess-the-clip', function* (view) {
     // Show prompt
     yield* all(
       promptTxt().opacity(1, 0.4),
-      promptTxt().y(Y_PROMPT + 10, 0).to(Y_PROMPT, 0.4, easeOutCubic),
+      promptTxt().y(promptTxt().y() + 10, 0).to(promptTxt().y(), 0.4, easeOutCubic),
     );
 
     // Slide in options
@@ -624,6 +676,9 @@ export default makeScene2D('guess-the-clip', function* (view) {
       clipBox().scale(0.8, 0.4),
     );
     allNodes.forEach(n => n.remove());
+    if (hasAudio) {
+      clipAudio().remove();
+    }
     yield* waitFor(0.2);
   }
 

@@ -1,12 +1,12 @@
-import {Rect, Txt} from '@revideo/2d';
+import {Rect, Txt} from '@reelgen/2d';
 import {
   all,
   createRef,
   waitFor,
   easeOutBack,
   easeOutCubic,
-} from '@revideo/core';
-import type {View2D} from '@revideo/2d';
+} from '@reelgen/core';
+import type {View2D} from '@reelgen/2d';
 
 export interface OutroConfig {
   title?: string;

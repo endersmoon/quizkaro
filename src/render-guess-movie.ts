@@ -1,4 +1,4 @@
-import {renderVideo} from '@revideo/renderer';
+import {renderVideo} from '@reelgen/renderer';
 
 const sampleQuestions = [
   {

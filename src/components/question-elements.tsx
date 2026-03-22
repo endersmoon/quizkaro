@@ -1,5 +1,5 @@
-import {Rect, Txt, Circle, Layout} from '@revideo/2d';
-import {Gradient} from '@revideo/2d';
+import {Rect, Txt, Circle, Layout} from '@reelgen/2d';
+import {Gradient} from '@reelgen/2d';
 import {
   all,
   createRef,
@@ -9,8 +9,8 @@ import {
   easeOutCubic,
   easeInCubic,
   linear,
-} from '@revideo/core';
-import type {View2D} from '@revideo/2d';
+} from '@reelgen/core';
+import type {View2D} from '@reelgen/2d';
 import type {QuizTheme} from '../themes';
 
 // ─── PROGRESS DOTS ───

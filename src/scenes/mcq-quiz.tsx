@@ -1,5 +1,5 @@
-import {Rect, Txt, Circle, Layout, makeScene2D} from '@revideo/2d';
-import {Gradient} from '@revideo/2d';
+import {Rect, Txt, Circle, Layout, makeScene2D} from '@reelgen/2d';
+import {Gradient} from '@reelgen/2d';
 import {
   all,
   createRef,
@@ -10,7 +10,7 @@ import {
   easeOutCubic,
   easeInCubic,
   linear,
-} from '@revideo/core';
+} from '@reelgen/core';
 
 interface Question {
   text: string;
@@ -145,9 +145,10 @@ export default makeScene2D('mcq-quiz', function* (view) {
   const Y_HEADER = -750;
   const Y_DOTS = -700;
   const Y_QUESTION = -500;
-  const Y_FIRST_OPTION = -180;
+  const Y_FIRST_OPTION_DEFAULT = -180;
   const OPTION_GAP = 150;
-  const Y_TIMER = 520;
+  const Y_TIMER_DEFAULT = 520;
+  const OPTION_TOP_MARGIN = 40;
 
   for (let qi = 0; qi < questions.length; qi++) {
     const q = questions[qi];
@@ -234,7 +235,7 @@ export default makeScene2D('mcq-quiz', function* (view) {
             fill={C.optionBg}
             stroke={C.optionBorder}
             lineWidth={2}
-            y={Y_FIRST_OPTION + i * OPTION_GAP}
+            y={Y_FIRST_OPTION_DEFAULT + i * OPTION_GAP}
             opacity={0}
             x={i % 2 === 0 ? -500 : 500}
             shadowColor={'rgba(0,0,0,0.3)'}
@@ -276,7 +277,7 @@ export default makeScene2D('mcq-quiz', function* (view) {
           size={100}
           stroke={C.timerBg}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
         {/* Timer circle fill */}
@@ -285,7 +286,7 @@ export default makeScene2D('mcq-quiz', function* (view) {
           size={100}
           stroke={accentColor}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           startAngle={-90}
           endAngle={270}
           shadowColor={accentColor}
@@ -300,11 +301,22 @@ export default makeScene2D('mcq-quiz', function* (view) {
           fontWeight={800}
           fontFamily="'Arial', sans-serif"
           fill={C.white}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
       </>,
     );
+
+    // Dynamically position options based on question card height
+    const cardBottom = Y_QUESTION + questionCard().height() / 2;
+    const actualYStart = cardBottom + OPTION_TOP_MARGIN;
+    for (let i = 0; i < q.options.length; i++) {
+      optionRects[i].y(actualYStart + i * OPTION_GAP);
+    }
+    const timerY = actualYStart + q.options.length * OPTION_GAP + 40;
+    timerBgCircle().y(timerY);
+    timerFillCircle().y(timerY);
+    timerTxt().y(timerY);
 
     // ─── Animate in ───
     yield* all(

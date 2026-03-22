@@ -1,5 +1,5 @@
-import {Rect, Txt, Circle, Layout, Line, makeScene2D} from '@revideo/2d';
-import {Gradient} from '@revideo/2d';
+import {Audio, Rect, Txt, Circle, Layout, Line, makeScene2D} from '@reelgen/2d';
+import {Gradient} from '@reelgen/2d';
 import {
   all,
   chain,
@@ -13,7 +13,7 @@ import {
   easeInOutSine,
   linear,
   Vector2,
-} from '@revideo/core';
+} from '@reelgen/core';
 
 interface SongQuestion {
   options: string[]; // "Artist - Song Title" format
@@ -176,9 +176,10 @@ export default makeScene2D('guess-song', function* (view) {
   const Y_LISTEN = -600;
   const Y_WAVEFORM = -400;
   const Y_PROMPT = -180;
-  const Y_FIRST_OPTION = -20;
+  const Y_FIRST_OPTION_DEFAULT = -20;
   const OPTION_GAP = 140;
-  const Y_TIMER = 560;
+  const Y_TIMER_DEFAULT = 560;
+  const OPTION_TOP_MARGIN = 40;
 
   const BAR_COUNT = 32;
   const BAR_WIDTH = 18;
@@ -204,6 +205,8 @@ export default makeScene2D('guess-song', function* (view) {
     const timerTxt = createRef<Txt>();
     const playIcon = createRef<Circle>();
     const playTriangle = createRef<Rect>();
+    const songAudio = createRef<Audio>();
+    const hasAudio = !!q.audioClip;
 
     // Generate bar heights for this question
     const barHeights = generateBarHeights(BAR_COUNT, qi);
@@ -285,6 +288,15 @@ export default makeScene2D('guess-song', function* (view) {
           })}
         </Rect>
 
+        {/* Audio clip (if provided) — invisible, just plays sound */}
+        {hasAudio && (
+          <Audio
+            ref={songAudio}
+            src={q.audioClip!}
+            play={false}
+          />
+        )}
+
         {/* "What song is this?" prompt */}
         <Txt
           ref={promptTxt}
@@ -309,7 +321,7 @@ export default makeScene2D('guess-song', function* (view) {
             fill={C.optionBg}
             stroke={C.optionBorder}
             lineWidth={2}
-            y={Y_FIRST_OPTION + i * OPTION_GAP}
+            y={Y_FIRST_OPTION_DEFAULT + i * OPTION_GAP}
             opacity={0}
             x={i % 2 === 0 ? -500 : 500}
             shadowColor={'rgba(0,0,0,0.3)'}
@@ -352,7 +364,7 @@ export default makeScene2D('guess-song', function* (view) {
           size={100}
           stroke={C.timerBg}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
         <Circle
@@ -360,7 +372,7 @@ export default makeScene2D('guess-song', function* (view) {
           size={100}
           stroke={accentColor}
           lineWidth={8}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           startAngle={-90}
           endAngle={270}
           shadowColor={accentColor}
@@ -374,11 +386,22 @@ export default makeScene2D('guess-song', function* (view) {
           fontWeight={800}
           fontFamily="'Arial', sans-serif"
           fill={C.white}
-          y={Y_TIMER}
+          y={Y_TIMER_DEFAULT}
           opacity={0}
         />
       </>,
     );
+
+    // Dynamically position options based on prompt text height
+    const promptBottom = Y_PROMPT + promptTxt().height() / 2;
+    const actualYStart = promptBottom + OPTION_TOP_MARGIN;
+    for (let i = 0; i < q.options.length; i++) {
+      optionRects[i].y(actualYStart + i * OPTION_GAP);
+    }
+    const timerY = actualYStart + q.options.length * OPTION_GAP + 40;
+    timerBgCircle().y(timerY);
+    timerFillCircle().y(timerY);
+    timerTxt().y(timerY);
 
     // ─── Animate in ───
     yield* all(
@@ -393,6 +416,10 @@ export default makeScene2D('guess-song', function* (view) {
     );
 
     // ─── Waveform animation (simulating audio playback) ───
+    // Start audio if available
+    if (hasAudio) {
+      songAudio().play();
+    }
     // Animate bars growing to their target heights with stagger
     yield* all(
       ...waveformBars.map((bar, i) =>
@@ -417,7 +444,7 @@ export default makeScene2D('guess-song', function* (view) {
     // Show prompt and options
     yield* all(
       promptTxt().opacity(1, 0.4),
-      promptTxt().y(Y_PROMPT + 10, 0).to(Y_PROMPT, 0.4, easeOutCubic),
+      promptTxt().y(promptTxt().y() + 10, 0).to(promptTxt().y(), 0.4, easeOutCubic),
     );
 
     // Slide in options
@@ -459,7 +486,10 @@ export default makeScene2D('guess-song', function* (view) {
     );
 
     // ─── Reveal answer ───
-    // Shrink waveform bars
+    // Stop audio and shrink waveform bars
+    if (hasAudio) {
+      songAudio().pause();
+    }
     yield* all(
       ...waveformBars.map(bar => bar.height(10, 0.3)),
       listenTxt().opacity(0, 0.3),
@@ -502,6 +532,9 @@ export default makeScene2D('guess-song', function* (view) {
       ),
     );
     allNodes.forEach(n => n.remove());
+    if (hasAudio) {
+      songAudio().remove();
+    }
     yield* waitFor(0.2);
   }
 

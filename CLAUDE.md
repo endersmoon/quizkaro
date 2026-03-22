@@ -71,6 +71,10 @@ The `guess-the-clip` template has additional variables:
 - `watchText` — text during clip playback (default: `👀  Watch carefully...`)
 - `clipDuration` — seconds the simulated clip runs (default: `15`)
 
+Each question in `guess-the-clip` can optionally include:
+- `clipSrc` — path to an MP4 video file to play inside the clip box (visual only, no audio in final render)
+- `clipLabel` — hint text shown during clip playback
+
 ### Themes (src/themes/index.ts)
 `QuizTheme` interface defines: background gradient, card/accent/correct/wrong colors, option label colors.
 Available: `dark-purple`, `neon-pink`, `bollywood-gold`, `ocean-blue`, `retro-arcade`.

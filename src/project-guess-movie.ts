@@ -1,4 +1,4 @@
-import {makeProject} from '@revideo/core';
+import {makeProject} from '@reelgen/core';
 import guessMovieEmoji from './scenes/guess-movie-emoji';
 
 const sampleQuestions = JSON.stringify([

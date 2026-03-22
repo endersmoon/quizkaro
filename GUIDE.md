@@ -166,6 +166,7 @@ Create a file like `data/guess-song/my-playlist.json`:
 | `questions` | array | Yes | Array of question objects |
 | `questions[].options` | string[] | Yes | 4 options in `"Artist - Song"` format |
 | `questions[].correctIndex` | number | Yes | Index of correct answer (0-3) |
+| `questions[].audioClip` | string | No | Path to audio file to play during waveform (e.g. `"clips/song.mp3"`) |
 
 ### Render
 
@@ -174,10 +175,55 @@ npm run render data/guess-song/my-playlist.json
 # Output: output/guess-song-my-playlist.mp4
 ```
 
+### Adding Real Audio Clips
+
+You can play actual audio during the waveform animation. Add an `audioClip` field to each question:
+
+```json
+{
+  "template": "guess-song",
+  "title": "90s Hits Quiz!",
+  "thinkTime": 12,
+  "questions": [
+    {
+      "audioClip": "clips/smells-like-teen-spirit.mp3",
+      "options": [
+        "Nirvana - Smells Like Teen Spirit",
+        "Pearl Jam - Alive",
+        "Soundgarden - Black Hole Sun",
+        "Alice in Chains - Rooster"
+      ],
+      "correctIndex": 0
+    }
+  ]
+}
+```
+
+The audio plays during the waveform animation and continues through the countdown timer, then stops when the answer is revealed.
+
+#### Audio file requirements
+
+| Requirement | Details |
+| --- | --- |
+| Format | MP3 or WAV recommended |
+| Duration | Should be long enough to cover the waveform + think time (~15-25s) |
+| Path | Relative to the project root (e.g. `clips/song-clip.mp3`) or absolute path |
+
+#### Preparing audio clips
+
+Use FFmpeg to extract a clip from a full song:
+
+```bash
+# Extract 25 seconds starting at the chorus (0:45)
+ffmpeg -ss 00:00:45 -i full-song.mp3 -t 25 -c copy clips/song-clip.mp3
+```
+
+> **Tip:** Pick a recognizable part of the song (chorus, intro riff) for the best quiz experience.
+
 ### Tips
 - Use `"Artist - Song Title"` format for options
-- The waveform is currently visual-only (no actual audio playback)
-- To add real audio later, add `"audioClip": "path/to/clip.mp3"` to each question
+- Without `audioClip`, the waveform is visual-only (no audio)
+- You can mix questions with and without audio clips
 - Group songs by genre or decade for better engagement
 
 ---
@@ -311,6 +357,8 @@ Create a file like `data/guess-the-clip/my-clips.json`:
 | `questions` | array | Yes | Array of question objects |
 | `questions[].options` | string[] | Yes | 4 answer options |
 | `questions[].correctIndex` | number | Yes | Index of correct answer (0-3) |
+| `questions[].clipSrc` | string | No | Path to video file to play in the clip box (e.g. `"clips/scene.mp4"`) |
+| `questions[].audioSrc` | string | No | Path to audio file to play during the clip (e.g. `"clips/audio.mp3"`) |
 | `questions[].clipLabel` | string | No | Hint text shown inside the clip box (e.g. `"Hint: 90s classic"`) |
 
 ### Render
@@ -349,11 +397,118 @@ npm run render data/guess-the-clip/bollywood-scenes.json
 }
 ```
 
+### Adding Real Video Clips
+
+You can embed actual video files inside the clip playback box. Add a `clipSrc` field to each question pointing to your video file:
+
+```json
+{
+  "template": "guess-the-clip",
+  "title": "Guess the Bollywood Scene!",
+  "clipDuration": 15,
+  "thinkTime": 10,
+  "questions": [
+    {
+      "clipSrc": "clips/3-idiots-scene.mp4",
+      "clipLabel": "Hint: A college comedy",
+      "options": ["3 Idiots", "PK", "Munna Bhai M.B.B.S.", "Lage Raho Munna Bhai"],
+      "correctIndex": 0
+    }
+  ]
+}
+```
+
+#### Clip file requirements
+
+| Requirement | Details |
+| --- | --- |
+| Format | MP4 (H.264) recommended — fastest decoder. WebM also supported (slower) |
+| Resolution | Any — will be scaled to fit the 900×400 clip box. 720p or 1080p works well |
+| Duration | Should be ≥ `clipDuration` seconds. Only the first `clipDuration` seconds will play |
+| Path | Relative to the project root (e.g. `clips/my-scene.mp4`) or absolute path |
+| Audio | Video audio is **not** embedded automatically — use `audioSrc` to add a separate audio track |
+
+#### Where to put your clips
+
+Create a `clips/` folder in the project root:
+
+```
+quizkaro/
+├── clips/
+│   ├── 3-idiots-scene.mp4
+│   ├── sholay-scene.mp4
+│   └── paris-timelapse.mp4
+├── data/
+│   └── guess-the-clip/
+│       └── bollywood-scenes.json   ← references clips/3-idiots-scene.mp4
+```
+
+#### Mixed mode (some clips, some simulated)
+
+You can mix questions with and without `clipSrc`. Questions without it will show the simulated countdown box:
+
+```json
+{
+  "questions": [
+    {
+      "clipSrc": "clips/scene1.mp4",
+      "options": ["Movie A", "Movie B", "Movie C", "Movie D"],
+      "correctIndex": 0
+    },
+    {
+      "clipLabel": "Hint: 80s action classic",
+      "options": ["Die Hard", "Rambo", "Terminator", "Predator"],
+      "correctIndex": 0
+    }
+  ]
+}
+```
+
+#### Trimming clips
+
+The template plays the first `clipDuration` seconds of the video. To use a specific segment, pre-trim your clip with FFmpeg:
+
+```bash
+# Extract 15 seconds starting at 1:30
+ffmpeg -ss 00:01:30 -i full-movie.mp4 -t 15 -c copy clips/my-scene.mp4
+```
+
+### Adding Audio to Clips
+
+You can also add audio that plays during the clip (useful for "Guess the Song" variants or adding movie dialogue):
+
+```json
+{
+  "questions": [
+    {
+      "clipSrc": "clips/scene.mp4",
+      "audioSrc": "clips/scene-audio.mp3",
+      "options": ["Movie A", "Movie B", "Movie C", "Movie D"],
+      "correctIndex": 0
+    }
+  ]
+}
+```
+
+The audio plays during the clip countdown and stops when the answer is revealed. You can use `audioSrc` with or without `clipSrc`:
+
+- **`clipSrc` + `audioSrc`** — Video plays with separate audio track
+- **`audioSrc` only** — Audio plays over the simulated countdown box (great for audio-only quizzes)
+- **`clipSrc` only** — Silent video clip
+
+#### Extracting audio from video
+
+```bash
+# Extract audio from a movie clip
+ffmpeg -i clips/scene.mp4 -vn -t 15 clips/scene-audio.mp3
+```
+
 ### Tips
 - `clipDuration: 10-15` works best for engagement — long enough to think, short enough to be exciting
 - Use `clipLabel` to give viewers a hint during the clip (genre, era, category)
 - 3 clips at 15s + 10s think time makes a ~2 minute video
-- The clip playback is simulated (countdown + progress bar) — the template doesn't embed actual video/audio clips yet
+- Without `clipSrc`, the template shows a simulated countdown box (no actual video)
+- MP4 files render much faster than WebM — always use MP4 when possible
 
 ---
 

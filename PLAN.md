@@ -2,7 +2,7 @@
 
 ## Vision
 
-A template-based video generation platform that creates engaging quiz/trivia short-form videos (YouTube Shorts, TikTok, Instagram Reels) using Revideo. Inspired by channels like QuizBlitz.
+A template-based video generation platform that creates engaging quiz/trivia short-form videos (YouTube Shorts, TikTok, Instagram Reels) using Reelgen. Inspired by channels like QuizBlitz.
 
 ---
 
@@ -16,7 +16,7 @@ A template-based video generation platform that creates engaging quiz/trivia sho
   - Correct answer highlighted green with glow, wrong answers faded with red borders
   - Animated outro with CTA
 - **Render Pipeline** (`src/render.ts`)
-  - Programmatic rendering via `renderVideo()` from `@revideo/renderer`
+  - Programmatic rendering via `renderVideo()` from `@reelgen/renderer`
   - Configurable via variables: title, questions JSON, think time, accent color
   - Multi-worker rendering (~11s for a 1-minute video)
 - **Project Config** (`src/project.ts`)
@@ -28,10 +28,10 @@ A template-based video generation platform that creates engaging quiz/trivia sho
 
 | Layer        | Technology                          |
 | ------------ | ----------------------------------- |
-| Animation    | Revideo (Motion Canvas fork) v0.10  |
+| Animation    | Reelgen (Motion Canvas fork) v0.10  |
 | Language     | TypeScript + TSX                    |
-| Build        | Vite + @revideo/vite-plugin         |
-| Rendering    | @revideo/renderer + FFmpeg          |
+| Build        | Vite + @reelgen/vite-plugin         |
+| Rendering    | @reelgen/renderer + FFmpeg          |
 | Runtime      | Node.js via tsx                     |
 
 ### Project Structure
@@ -39,7 +39,7 @@ A template-based video generation platform that creates engaging quiz/trivia sho
 ```
 quizkaro/
 ├── src/
-│   ├── project.ts                # Revideo project config (canvas size, variables)
+│   ├── project.ts                # Reelgen project config (canvas size, variables)
 │   ├── render.ts                 # CLI render script
 │   └── scenes/
 │       └── mcq-quiz.tsx          # MCQ quiz scene (intro → questions → outro)

@@ -1,13 +1,13 @@
 {
   "name": "quizkaro",
   "version": "1.0.0",
-  "description": "Template-based quiz video generator powered by Revideo",
+  "description": "Template-based quiz video generator powered by Reelgen",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "render": "tsx src/cli.ts",
     "render:old": "tsx src/render.ts",
-    "serve": "npx revideo serve --projectFile ./src/project.ts",
+    "serve": "vite --config vite.config.ts",
     "web": "tsx src/web/server.ts"
   },
   "dependencies": {

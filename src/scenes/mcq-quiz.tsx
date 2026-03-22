@@ -307,9 +307,13 @@ export default makeScene2D('mcq-quiz', function* (view) {
       </>,
     );
 
+    // Wait one frame for Revideo to compute layout before reading card height
+    yield;
+
     // Dynamically position options based on question card height
-    const cardBottom = Y_QUESTION + questionCard().height() / 2;
-    const actualYStart = cardBottom + OPTION_TOP_MARGIN;
+    const cardHeight = questionCard().height();
+    const cardBottom = Y_QUESTION + Math.max(cardHeight, 120) / 2;
+    const actualYStart = Math.max(cardBottom + OPTION_TOP_MARGIN, Y_FIRST_OPTION_DEFAULT);
     for (let i = 0; i < q.options.length; i++) {
       optionRects[i].y(actualYStart + i * OPTION_GAP);
     }

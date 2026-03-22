@@ -1,6 +1,6 @@
 # QuizKaro
 
-Template-based quiz video generator for YouTube Shorts / TikTok / Reels, powered by Revideo.
+Template-based quiz video generator for YouTube Shorts / TikTok / Reels, powered by Reelgen.
 
 ## Quick Start
 
@@ -10,7 +10,7 @@ npm run render data/mcq/general-knowledge.json
 npm run render data/guess-movie-emoji/bollywood.json --theme ocean-blue
 npm run render data/guess-song/pop-hits.json --out my-quiz.mp4
 
-# Interactive editor (Revideo UI)
+# Interactive editor (Reelgen UI)
 npm run serve
 
 # CLI help
@@ -29,7 +29,7 @@ src/
 │   └── question-elements.tsx       # Options, timer, dots, reveal, fadeout
 ├── themes/
 │   └── index.ts                    # QuizTheme interface + 5 built-in themes
-├── scenes/                         # Video templates (Revideo scenes)
+├── scenes/                         # Video templates (Reelgen scenes)
 │   ├── mcq-quiz.tsx                # Original MCQ template
 │   ├── mcq-quiz-v2.tsx             # MCQ using shared components
 │   ├── guess-song.tsx              # Guess the Song (waveform animation)
@@ -57,7 +57,7 @@ output/                             # Rendered MP4 videos
 - Coordinate system: origin at center, X: -540 to +540, Y: -960 to +960
 
 ### Templates
-Each template is a Revideo `makeScene2D` scene in `src/scenes/`. Templates receive data via `useScene().variables`:
+Each template is a Reelgen `makeScene2D` scene in `src/scenes/`. Templates receive data via `useScene().variables`:
 - `title` — quiz title
 - `questions` — JSON stringified array
 - `thinkTime` — seconds per question
@@ -105,7 +105,7 @@ JSON files in `data/` with structure:
 ## Key Conventions
 
 - Use absolute Y positioning for elements (not Layout) to avoid overlap issues with scale/opacity animations
-- Revideo scenes use generator functions — `yield*` for sequential, `all()` for parallel animations
+- Reelgen scenes use generator functions — `yield*` for sequential, `all()` for parallel animations
 - `createRef<T>()` for single nodes, `createRefArray<T>()` for repeated nodes
 - Always `.remove()` nodes after fading out to prevent memory issues
 - Render with `npx tsx` (not `node`) since project uses TypeScript + TSX
@@ -115,4 +115,4 @@ JSON files in `data/` with structure:
 - `Layout` with `direction="row/column"` breaks when children start with `scale={0}` or `height={0}` — the layout engine can't distribute zero-size elements. Use absolute positioning instead.
 - `chain()` inside `all()` can extend total duration beyond the timer if chains are sequential — be careful with parallel vs sequential composition.
 - Flag emojis (🇮🇳) may not render in the headless browser — they show as letter boxes. Standard emojis work fine.
-- The Revideo default canvas is 1920×1080 (landscape). Always set `settings.shared.size` to `{x: 1080, y: 1920}` for portrait.
+- The Reelgen default canvas is 1920×1080 (landscape). Always set `settings.shared.size` to `{x: 1080, y: 1920}` for portrait.
